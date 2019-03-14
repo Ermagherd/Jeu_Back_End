@@ -40,6 +40,7 @@ app.use(session({
 	secret:'And death shall have no dominion',
 	saveUninitialized : false,
 	resave: false,
+	
 	// store: new MongoStore({
 	// 	url: uri,
 	// 	ttl: 14 * 24 * 60 * 60, // save session 14 days
