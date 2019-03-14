@@ -64,15 +64,15 @@ app.use(function(req,res,next){
 });
 
 // CONNECTION DB
-const client = new MongoClient(url, { useNewUrlParser: true });
-client.connect(err => {
-  const collection = client.db(dbname).collection("users");
-    collection.find({}).toArray(function(err, docs) {
-      console.log(docs)
-  // perform actions on the collection object
-    })
-  client.close();
-});
+// const client = new MongoClient(url, { useNewUrlParser: true });
+// client.connect(err => {
+//   const collection = client.db(dbname).collection("users");
+//     collection.find({}).toArray(function(err, docs) {
+//       console.log(docs)
+//   // perform actions on the collection object
+//     })
+//   client.close();
+// });
 
 const gE = require('game-engine');
 
