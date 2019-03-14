@@ -10,8 +10,9 @@ const io = require('socket.io')(http);
 const bodyParser = require('body-parser');
 // MONGO
 const MongoClient = require('mongodb').MongoClient;
-const url = "mongodb+srv://Bertmern:DatMongoatlaspass2019@cluster0-egm2w.mongodb.net/seesions?retryWrites=true";
-const uri = "mongodb+srv://Bertmern:DatMongoatlaspass2019@cluster0-egm2w.mongodb.net/?authSource=admins&w=1";
+const url = "mongodb+srv://Bertmern:DatMongoatlaspass2019@cluster0-egm2w.mongodb.net/test?retryWrites=true";
+const uri = "mongodb+srv://Bertmern:DatMongoatlaspass2019@cluster0-egm2w.mongodb.net/test?authSource=admins&w=1";
+// const uri = "mongodb://localhost:27017/ifocop";
 const dbname = 'IFOCOP-BACKEND';
 // SESSION
 const session = require('express-session');
@@ -35,27 +36,27 @@ app.set('views', './views');
 app.use(bodyParser.urlencoded({extended: false}));
 
 // app.use(cookieParser()) no longer needed 
+const username = "Bertmern";
+const password = "DatMongoatlaspass2019";
+const mongoDbUrl = `mongodb://${username}:${password}@cluster0-shard-00-00-egm2w.mongodb.net:27017,cluster0-shard-00-01-egm2w.mongodb.net:27017,cluster0-shard-00-02-egm2w.mongodb.net:27017/IFOCOP-BACKEND?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin`;
 app.use(session({
-	name: 'jeu-back',
 	secret:'And death shall have no dominion',
-	saveUninitialized : false,
-	resave: false,
-	
-	// store: new MongoStore({
-	// 	url: uri,
-	// 	ttl: 14 * 24 * 60 * 60, // save session 14 days
-	// }),
+	saveUninitialized : true,
+	resave: true,
+	store: new MongoStore({
+		url: mongoDbUrl,
+		ttl: 14 * 24 * 60 * 60, // save session 14 days
+	}),
 	cookie: {
 		httpOnly: true,
 		maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
 	},
 }));
 
-
-console.log(session)
 // ROUTES
 
 app.get('/', function (req,res, next) {
+	console.log()
 	res.render('connexion');
 })
 
