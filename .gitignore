@@ -1,2 +1,7 @@
 node_modules/
-src/
+src/vendor/
+src/img/about/
+src/img/logos/
+src/img/portfolio/
+src/img/team/
+src/scss/
