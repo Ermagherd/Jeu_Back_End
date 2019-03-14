@@ -10,14 +10,14 @@ const io = require('socket.io')(http);
 const bodyParser = require('body-parser');
 // MONGO
 const MongoClient = require('mongodb').MongoClient;
-const url = "mongodb+srv://Bertmern:DatMongoatlaspass2019@cluster0-egm2w.mongodb.net/test?retryWrites=true";
-const uri = "mongodb+srv://Bertmern:DatMongoatlaspass2019@cluster0-egm2w.mongodb.net/test/";
+const url = "mongodb+srv://Bertmern:DatMongoatlaspass2019@cluster0-egm2w.mongodb.net/seesions?retryWrites=true";
+const uri = "mongodb+srv://Bertmern:DatMongoatlaspass2019@cluster0-egm2w.mongodb.net/?authSource=admins&w=1";
 const dbname = 'IFOCOP-BACKEND';
 // SESSION
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 // COOKIE PARSER
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 // PUG
 const pug = require('pug');
 
@@ -36,15 +36,22 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 // app.use(cookieParser()) no longer needed 
 app.use(session({
+	name: 'jeu-back',
 	secret:'And death shall have no dominion',
 	saveUninitialized : false,
 	resave: false,
-	store: new MongoStore({
-		url: uri,
-		touchAfter: 24 * 3600 // time period in seconds
-	})
+	// store: new MongoStore({
+	// 	url: uri,
+	// 	ttl: 14 * 24 * 60 * 60, // save session 14 days
+	// }),
+	cookie: {
+		httpOnly: true,
+		maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
+	},
 }));
 
+
+console.log(session)
 // ROUTES
 
 app.get('/', function (req,res, next) {
@@ -71,7 +78,7 @@ client.connect(err => {
       console.log(docs)
   // perform actions on the collection object
     })
-  client.close();
+  // client.close();
 });
 
 const gE = require('game-engine');
