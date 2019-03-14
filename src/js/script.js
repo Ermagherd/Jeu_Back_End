@@ -1,0 +1,9 @@
+window.addEventListener('DOMContentLoaded', function () {
+
+	var socket = io("http://www.localhost:8888");
+	///////////////////////////////////////////////////////////////
+	/////                     LANCEMENT DU JEU                /////
+	///////////////////////////////////////////////////////////////
+	game(socket);
+
+}, true);
