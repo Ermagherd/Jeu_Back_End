@@ -11,7 +11,7 @@ section#contact
 				h3.section-subheading.text-muted Merci de renseigner votre nom de joueur et votre mot de passe.
 		.row
 			.col-lg-12
-				form#contactForm(name='sentMessage' novalidate='novalidate')
+				form#connexionForm(name='sentMessage' novalidate='novalidate')
 					.row.justify-content-center
 						.col-md-6.text-center
 							.form-group
@@ -36,7 +36,7 @@ include includes/footer.pug
 script(src='vendor/jquery/jquery.min.js')
 script(src='vendor/bootstrap/js/bootstrap.bundle.min.js')
 // Plugin JavaScript
-script(src='vendor/jquery-easing/jquery.easing.min.js')
+//- script(src='vendor/jquery-easing/jquery.easing.min.js')
 // Contact form JavaScript
 //- script(src='js/jqBootstrapValidation.js')
 //- script(src='js/contact_me.js')
@@ -44,4 +44,4 @@ script(src='vendor/jquery-easing/jquery.easing.min.js')
 script(src='js/agency.min.js')
 // Socket io
 script(src='/socket.io/socket.io.js')
-script(src='js/script.js')
+script(src='js/login.js')
