@@ -56,8 +56,11 @@ app.use(session({
 // ROUTES
 
 app.get('/', function (req,res, next) {
-	console.log()
 	res.render('connexion');
+})
+
+app.get('/accueil', function (req,res, next) {
+	res.render('accueil');
 })
 
 // ERREURS
