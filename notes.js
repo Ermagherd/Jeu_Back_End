@@ -1,8 +1,4 @@
-/*
-
-///////////////////////////////////////////////////
 /* sessions via ws
-
 A la connection, en + de la création d'une session via express session,
 je vais créer un token, JSON WEB TOKEN, qui est une chaine de caractère aléatoire
 et c'est DANS LE CONTENU DE LA PAGE, dans le html, que je vais passer une variable
@@ -41,6 +37,6 @@ setInterval de verif si un autre utilisateur s'est connecté
 
 5 - Quand 2 users sont connectés dans la même roo
 le canvas devient visible et le jeu se lance
-
+*/
 
 
