@@ -18,7 +18,7 @@ const dbname = 'IFOCOP-BACKEND';
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 // COOKIE PARSER
-// const cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 // PUG
 const pug = require('pug');
 
@@ -34,6 +34,7 @@ app.set('view engine', 'pug');
 app.set('views', './views');
 
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(cookieParser());
 
 // app.use(cookieParser()) no longer needed 
 const username = "Bertmern";
@@ -56,15 +57,23 @@ app.use(session({
 // ROUTES
 
 app.get('/', function (req,res, next) {
+	// if session ID et identifiants existent => res.render('accueil')
+
+	// if not => res.render('connexion')
 	res.render('connexion');
 })
 
-app.get('/accueil', function (req,res, next) {
-	res.render('accueil');
-})
+// app.get('/accueil', function (req,res, next) {
+// 	res.render('accueil');
+// })
 
 app.post('/accueil', function (req,res, next) {
-	res.render('accueil');
+	// if session ID et identifiants existent => res.render('accueil')
+
+	// if not => res.render('connexion')
+	console.log('session : ', req.session);
+	console.log('req : ', req.sessionID);
+	res.render('accueil', {pseudo: req.body.name});
 })
 
 // ERREURS
@@ -84,7 +93,7 @@ const client = new MongoClient(url, { useNewUrlParser: true });
 client.connect(err => {
   const collection = client.db(dbname).collection("users");
     collection.find({}).toArray(function(err, docs) {
-      console.log(docs)
+      // console.log(docs)
   // perform actions on the collection object
     })
   // client.close();
