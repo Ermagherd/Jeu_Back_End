@@ -10,13 +10,13 @@ window.addEventListener('DOMContentLoaded', function () {
     $('#pwd-check').parent().children('p').hide()
   })
   
-
   // verif des idenfiants de connexion
   $('#connexionForm').submit(function (e) {
     e.preventDefault();
     var name = $('#name').val();
     var pwd = $('#pwd').val();
     var confPwd = $('#pwd-check').val();
+		var valid = false;
 
     if (name === ''){
       $('#name').parent().children('p').html('Veuillez renseigner un pseudonyme.')
@@ -32,11 +32,12 @@ window.addEventListener('DOMContentLoaded', function () {
     }
 
     if ('' !== name && '' !== pwd && '' !== confPwd && pwd === confPwd){
-      $.get("/accueil", function (data){
-        
-      })
+			valid = true;
     }
 
-  })
-
+		if (valid) {
+			this.submit();
+		}
+	})
+	
 }, true);
