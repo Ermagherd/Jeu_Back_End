@@ -63,6 +63,10 @@ app.get('/accueil', function (req,res, next) {
 	res.render('accueil');
 })
 
+app.post('/accueil', function (req,res, next) {
+	res.render('accueil');
+})
+
 // ERREURS
 
 app.use(function(req,res,next){
