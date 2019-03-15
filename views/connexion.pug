@@ -11,21 +11,21 @@ section#contact
 				h3.section-subheading.text-muted Merci de renseigner votre nom de joueur et votre mot de passe.
 		.row
 			.col-lg-12
-				form#connexionForm(name='sentMessage' novalidate='novalidate')
+				form#connexionForm(name='sentMessage' action='/accueil' method='POST')
 					.row.justify-content-center
 						.col-md-6.text-center
 							.form-group
-								input#name.form-control(type='text' placeholder='Votre pseudo *' required='required' data-validation-required-message='Merci de renseigner un pseudonyme.')
+								input#name.form-control(name='name' type='text' placeholder='Votre pseudo *' required='required' data-validation-required-message='Merci de renseigner un pseudonyme.')
 								p.help-block.text-danger
 					.row.justify-content-center
 						.col-md-6.text-center.justify-content-center
 							.form-group
-								input#pwd.form-control(type='password' placeholder='Votre mot de passe *' required='required' data-validation-required-message='Merci de renseigner un mot de passe.')
+								input#pwd.form-control(name='pwd' type='password' placeholder='Votre mot de passe *' required='required' data-validation-required-message='Merci de renseigner un mot de passe.')
 								p.help-block.text-danger
 					.row.justify-content-center
 						.col-md-6.text-center.justify-content-center
 							.form-group
-								input#pwd-check.form-control(type='password' placeholder='Confirmez votre mot de passe *' required='required' data-validation-required-message='Veuillez confirmez votre mot de passe.')
+								input#pwd-check.form-control(name='pwd-check' type='password' placeholder='Confirmez votre mot de passe *' required='required' data-validation-required-message='Veuillez confirmez votre mot de passe.')
 								p.help-block.text-danger
 						.clearfix
 						.col-lg-12.text-center
