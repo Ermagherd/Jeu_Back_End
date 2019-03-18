@@ -87,26 +87,25 @@ app.get('/', function (req, res, next) {
         if (err) {
           res.statusCode == 503;
           next();
-        }
-        // if session exist
-        if (sessionConnectMongo.length > 0) {
-          if (sessionConnectMongo[0].pseudo === undefined || sessionConnectMongo[0].pwd === undefined){
-            res.render('connexion');
-          } else {
-            res.render('accueil', {pseudo: sessionConnectMongo[0].pseudo});
-          }
         } else {
-          // if user needs to connect
-          res.render('connexion');
+          // if session exist
+          if (sessionConnectMongo.length > 0) {
+            if (sessionConnectMongo[0].pseudo === undefined || sessionConnectMongo[0].pwd === undefined) {
+              res.render('connexion');
+            } else {
+              res.render('accueil', {
+                pseudo: sessionConnectMongo[0].pseudo
+              });
+            }
+          } else {
+            // if user needs to connect
+            res.render('connexion');
+          }
         }
       })
     }
   });
 })
-
-// app.get('/accueil', function (req,res, next) {
-// 	res.render('accueil');
-// })
 
 app.post('/accueil', function (req, res, next) {
   // if session ID et identifiants existent => res.render('accueil')
@@ -126,36 +125,70 @@ app.post('/accueil', function (req, res, next) {
         if (err) {
           res.statusCode == 503;
           next();
-        }
-        // ajout du pseudo et mdp si non exist
-
-
-        // HERE
-        // ajouter l'entrée du pseudo et mdp une fois la co faite
-
-
-        // if session exist
-        if (sessionConnectMongo.length > 0) {
-
-          if (!sessionConnectMongo.pseudo || !sessionConnectMongo[0].pwd){
-            res.render('connexion');
-          } else {
-            res.render('accueil', {pseudo: sessionConnectMongo[0].pseudo});
-          }
-
         } else {
-          // if user needs to connect
-          res.render('connexion');
+          
+          if (sessionConnectMongo.length > 0) {
+
+            if (!sessionConnectMongo[0].pseudo || !sessionConnectMongo[0].pwd) {
+              try {
+                collection.updateOne(
+                   { "_id" : req.sessionID },
+                   { $set: { "pseudo" : req.body.name, "pwd" : req.body.pwd } }
+                );
+             } catch (e) {
+                print(e);
+             }
+              // ajout du pseudo et mdp si non exist
+              // HERE
+              // ajouter l'entrée du pseudo et mdp une fois la co faite
+
+              // res.render('connexion');
+              res.render('accueil', {
+                pseudo: req.body.name
+              });
+            } else {
+              // if session exist
+              res.render('accueil', {
+                pseudo: sessionConnectMongo[0].pseudo
+              });
+            }
+
+          } else {
+            // if user needs to connect
+            res.render('connexion');
+          }
         }
       })
     }
   });
-  // if not => res.render('connexion')
-  // console.log('session : ', req.session);
-  // console.log('req : ', req.sessionID);
-  // res.render('accueil', {
-  //   pseudo: req.body.name
-  // });
+})
+
+// récupération de la liste des users côté client
+app.get("/usersFetch", function (req, res, next) {
+  const client = new MongoClient(url, {
+    useNewUrlParser: true
+  });
+  client.connect(err => {
+    if (err) {
+      res.statusCode == 503;
+      next();
+    } else {
+      const collection = client.db(dbname).collection("sessions");
+      collection.find({}).toArray(function (err, sessionConnectMongo) {
+        console.log('la session : ', sessionConnectMongo[0].pseudo)
+        if (err) {
+          res.statusCode == 503;
+          next();
+        } else {
+          let users = [];
+          sessionConnectMongo.forEach(element => {
+            users.push(element.pseudo)
+          });
+          res.send(users);
+        }
+      })
+    }
+  });
 })
 
 // GESTION DES ERREURS
@@ -163,7 +196,7 @@ app.post('/accueil', function (req, res, next) {
 app.use(function (req, res, next) {
   // test l'entête de la réponse
   if (res.statusCode == 503) {
-    res.send('Accès non autorisé')
+    res.send('Serveur indisponible. Veuillez réessayer ultérieurement');
   } else {
     // si erreur par défaut : status passé à 404 avant d'envoyer la réponse
     res.status(404).send('Fichier non trouvé');

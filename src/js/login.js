@@ -1,3 +1,5 @@
+'use strict';
+
 window.addEventListener('DOMContentLoaded', function () {
 
   $('#name').focus(function (e) {
@@ -13,13 +15,31 @@ window.addEventListener('DOMContentLoaded', function () {
   // verif des idenfiants de connexion
   $('#connexionForm').submit(function (e) {
     e.preventDefault();
+
+    // récupération des pseudos existants
+    var listePseudos;
+    $.ajax({
+      type: "GET",
+      url: "/usersFetch",
+      async: false,
+      success: function(users) {
+        console.log(users);
+        listePseudos = users;
+      }
+    });
+
     var name = $('#name').val();
     var pwd = $('#pwd').val();
     var confPwd = $('#pwd-check').val();
+    var pseudoExistant = listePseudos.includes(name);
 		var valid = false;
 
     if (name === ''){
       $('#name').parent().children('p').html('Veuillez renseigner un pseudonyme.')
+      $('#name').parent().children('p').show()
+    }
+    if (pseudoExistant){
+      $('#name').parent().children('p').html('Ce pseudonyme est déjà pris par un autre utilisateur.')
       $('#name').parent().children('p').show()
     }
     if (pwd === ''){
@@ -31,7 +51,7 @@ window.addEventListener('DOMContentLoaded', function () {
       $('#pwd-check').parent().children('p').show()
     }
 
-    if ('' !== name && '' !== pwd && '' !== confPwd && pwd === confPwd){
+    if ('' !== name && '' !== pwd && '' !== confPwd && pwd === confPwd && pseudoExistant === false){
 			valid = true;
     }
 
