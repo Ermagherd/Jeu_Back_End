@@ -1,5 +1,10 @@
 'use strict';
 
+
+////////////////////////////////////////////////
+////               REQUIRE               ////
+////////////////////////////////////////////////
+
 // EXPRESS
 const express = require('express');
 const app = express();
@@ -57,19 +62,31 @@ app.use(session({
   },
 }));
 // MONGO CONNECTION
-const client = new MongoClient(url, {
-  useNewUrlParser: true
-});
-client.connect(err => {
-  const collection = client.db(dbname).collection("users");
-  collection.find({}).toArray(function (err, docs) {
-    // console.log(docs)
-    // perform actions on the collection object
-  })
-  // client.close();
-});
+// const client = new MongoClient(url, {
+//   useNewUrlParser: true
+// });
+// client.connect(err => {
+//   const collection = client.db(dbname).collection("users");
+//   collection.find({}).toArray(function (err, docs) {
+//     // console.log(docs)
+//     // perform actions on the collection object
+//   })
+//   // client.close();
+// });
 
-// ROUTES
+// TOKEN GENERATOR
+var rand = function() {
+  return Math.random().toString(36).substr(2); // remove `0.`
+};
+var token = function() {
+  return rand() + rand() + rand(); // to make it longer
+};
+// token();
+
+
+////////////////////////////////////////////////
+////                 ROUTES                 ////
+////////////////////////////////////////////////
 
 app.get('/', function (req, res, next) {
   const client = new MongoClient(url, {
@@ -93,10 +110,52 @@ app.get('/', function (req, res, next) {
             if (sessionConnectMongo[0].pseudo === undefined || sessionConnectMongo[0].pwd === undefined) {
               res.render('connexion');
             } else {
+              var newToken = token()
               res.render('accueil', {
-                pseudo: sessionConnectMongo[0].pseudo
+                pseudo: sessionConnectMongo[0].pseudo,
+                tokenWs: 'var tokenWs = ' + newToken + ''
               });
             }
+          } else {
+            // if user needs to connect
+            res.render('connexion');
+          }
+        }
+      })
+    }
+  });
+})
+
+app.get('/accueil', function (req, res, next) {
+  const client = new MongoClient(url, {
+    useNewUrlParser: true
+  });
+  client.connect(err => {
+    if (err) {
+      res.statusCode == 503;
+      next();
+    } else {
+      const collection = client.db(dbname).collection("sessions");
+      collection.find({
+        _id: req.sessionID
+      }).toArray(function (err, sessionConnectMongo) {
+        if (err) {
+          res.statusCode == 503;
+          next();
+        } else {
+          
+          if (sessionConnectMongo.length > 0) {
+
+            if (!sessionConnectMongo[0].pseudo || !sessionConnectMongo[0].pwd) {
+              res.render('connexion');
+            } else {
+              // if session exist
+              res.render('accueil', {
+                pseudo: sessionConnectMongo[0].pseudo,
+                tokenWs: token()
+              });
+            }
+
           } else {
             // if user needs to connect
             res.render('connexion');
@@ -135,21 +194,18 @@ app.post('/accueil', function (req, res, next) {
                    { "_id" : req.sessionID },
                    { $set: { "pseudo" : req.body.name, "pwd" : req.body.pwd } }
                 );
-             } catch (e) {
-                print(e);
-             }
-              // ajout du pseudo et mdp si non exist
-              // HERE
-              // ajouter l'entrée du pseudo et mdp une fois la co faite
-
-              // res.render('connexion');
+              } catch (e) {
+                  print(e);
+              }
               res.render('accueil', {
-                pseudo: req.body.name
+                pseudo: req.body.name,
+                tokenWs: token()
               });
             } else {
               // if session exist
               res.render('accueil', {
-                pseudo: sessionConnectMongo[0].pseudo
+                pseudo: sessionConnectMongo[0].pseudo,
+                tokenWs: token()
               });
             }
 
