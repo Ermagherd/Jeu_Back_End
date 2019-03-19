@@ -1,7 +1,7 @@
 'use strict';
 
 ////////////////////////////////////////////////
-////               REQUIRE               ////
+////                 REQUIRE                ////
 ////////////////////////////////////////////////
 
 // EXPRESS
@@ -95,10 +95,10 @@ app.get('/', function (req, res, next) {
             if (sessionConnectMongo[0].pseudo === undefined || sessionConnectMongo[0].pwd === undefined) {
               res.render('connexion');
             } else {
-              var newToken = token()
+              // var newToken = token()
               res.render('accueil', {
                 pseudo: sessionConnectMongo[0].pseudo,
-                tokenWs: newToken
+                // tokenWs: newToken
               });
             }
           } else {
@@ -135,9 +135,10 @@ app.get('/accueil', function (req, res, next) {
               res.render('connexion');
             } else {
               // if session exist
+              // var newToken = token()
               res.render('accueil', {
                 pseudo: sessionConnectMongo[0].pseudo,
-                tokenWs: token()
+                // tokenWs: newToken
               });
             }
 
@@ -174,23 +175,25 @@ app.post('/accueil', function (req, res, next) {
           if (sessionConnectMongo.length > 0) {
 
             if (!sessionConnectMongo[0].pseudo || !sessionConnectMongo[0].pwd) {
+              var newToken = token() // crea d'un token et inscription de celui ci en bdd
               try {
                 collection.updateOne(
                    { "_id" : req.sessionID },
-                   { $set: { "pseudo" : req.body.name, "pwd" : req.body.pwd } }
+                   { $set: { "pseudo" : req.body.name, "pwd" : req.body.pwd, "token" :  newToken} }
                 );
               } catch (e) {
                   print(e);
               }
               res.render('accueil', {
                 pseudo: req.body.name,
-                tokenWs: token()
+                tokenWs: newToken
               });
             } else {
               // if session exist
+              // var newToken = token()
               res.render('accueil', {
                 pseudo: sessionConnectMongo[0].pseudo,
-                tokenWs: token()
+                // tokenWs: newToken
               });
             }
 
@@ -251,6 +254,26 @@ const gE = require('game-engine');
 let playersList = {};
 
 io.on('connection', function (socket) {
+
+  // association du socket.id au user.
+  // console.log(socket.handshake.query.token)
+  // const client = new MongoClient(url, {
+  //   useNewUrlParser: true
+  // });
+  // const collection = client.db(dbname).collection("sessions");
+  // collection.find({ sessionSocketId : socket.id}).toArray(function (err, data) {
+  //   if (err) {
+  //     console.log('pas trouvé')
+  //   } else {
+  //     console.log(data)
+  //   }
+  // })
+  // collection.updateOne(
+  //   { "token" : socket.handshake.query.token },
+  //   { $set: { "sessionSocketId" : socket.id } }
+  // )
+
+
 
   playersList[socket.id] = {
     pseudo: '',
