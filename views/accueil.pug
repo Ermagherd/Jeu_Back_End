@@ -41,6 +41,7 @@ section#contact
 						.col-lg-12.text-center
 							#success
 							button#sendMessageButton.btn.btn-primary.btn-xl.text-uppercase(type='submit') Envoyer
+p#token(style="display: none") #{tokenWs} 
 include includes/footer.pug
 // Bootstrap core JavaScript
 script(src='vendor/jquery/jquery.min.js')
@@ -54,9 +55,8 @@ script(src='js/contact_me.js')
 script(src='js/agency.min.js')
 // Token
 //- script.
-//- 	var tokenWs = 'Hello';
-//- 	console.log('type : ', typeof tokenWs)
-script= tokenWs
+//- 	var tokenWs = $('#token').html();
+//- 	console.log(tokenWs)
 // Socket io
 script(src='/socket.io/socket.io.js')
 // Jeu

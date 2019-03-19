@@ -11,6 +11,12 @@ body {
 	background-color: rgba(33, 37, 41, 1);
 }
 
+.titreJeu {
+  font-size: 40px;
+  line-height: 1.75;
+  color: #fed136;
+}
+
 .col-md-6.text-center.justify-content-center {
 
 	margin:auto;

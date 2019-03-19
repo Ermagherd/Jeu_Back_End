@@ -1,6 +1,5 @@
 'use strict';
 
-
 ////////////////////////////////////////////////
 ////               REQUIRE               ////
 ////////////////////////////////////////////////
@@ -61,18 +60,6 @@ app.use(session({
     maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
   },
 }));
-// MONGO CONNECTION
-// const client = new MongoClient(url, {
-//   useNewUrlParser: true
-// });
-// client.connect(err => {
-//   const collection = client.db(dbname).collection("users");
-//   collection.find({}).toArray(function (err, docs) {
-//     // console.log(docs)
-//     // perform actions on the collection object
-//   })
-//   // client.close();
-// });
 
 // TOKEN GENERATOR
 var rand = function() {
@@ -81,8 +68,6 @@ var rand = function() {
 var token = function() {
   return rand() + rand() + rand(); // to make it longer
 };
-// token();
-
 
 ////////////////////////////////////////////////
 ////                 ROUTES                 ////
@@ -113,7 +98,7 @@ app.get('/', function (req, res, next) {
               var newToken = token()
               res.render('accueil', {
                 pseudo: sessionConnectMongo[0].pseudo,
-                tokenWs: 'var tokenWs = ' + newToken + ''
+                tokenWs: newToken
               });
             }
           } else {
@@ -219,7 +204,7 @@ app.post('/accueil', function (req, res, next) {
   });
 })
 
-// récupération de la liste des users côté client
+// récupération de la liste des users côté client // AJAX
 app.get("/usersFetch", function (req, res, next) {
   const client = new MongoClient(url, {
     useNewUrlParser: true
