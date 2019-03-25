@@ -95,10 +95,23 @@ app.get('/', function (req, res, next) {
             if (sessionConnectMongo[0].pseudo === undefined || sessionConnectMongo[0].pwd === undefined) {
               res.render('connexion');
             } else {
-              // var newToken = token()
+              var newToken = token() // crea d'un token et inscription de celui ci en bdd
+              try {
+                collection.updateOne({
+                  "_id": req.sessionID
+                }, {
+                  $set: {
+                    "pseudo": sessionConnectMongo[0].pseudo,
+                    "pwd": sessionConnectMongo[0].pwd,
+                    "token": newToken
+                  }
+                });
+              } catch (e) {
+                print(e);
+              }
               res.render('accueil', {
                 pseudo: sessionConnectMongo[0].pseudo,
-                // tokenWs: newToken
+                tokenWs: newToken
               });
             }
           } else {
@@ -134,11 +147,23 @@ app.get('/accueil', function (req, res, next) {
             if (!sessionConnectMongo[0].pseudo || !sessionConnectMongo[0].pwd) {
               res.render('connexion');
             } else {
-              // if session exist
-              // var newToken = token()
+              var newToken = token() // crea d'un token et inscription de celui ci en bdd
+              try {
+                collection.updateOne({
+                  "_id": req.sessionID
+                }, {
+                  $set: {
+                    "pseudo": sessionConnectMongo[0].pseudo,
+                    "pwd": sessionConnectMongo[0].pwd,
+                    "token": newToken
+                  }
+                });
+              } catch (e) {
+                print(e);
+              }
               res.render('accueil', {
                 pseudo: sessionConnectMongo[0].pseudo,
-                // tokenWs: newToken
+                tokenWs: newToken
               });
             }
 
@@ -166,7 +191,7 @@ app.post('/accueil', function (req, res, next) {
       collection.find({
         _id: req.sessionID
       }).toArray(function (err, sessionConnectMongo) {
-        console.log('la session : ', sessionConnectMongo[0].pseudo)
+        // console.log('la session : ', sessionConnectMongo[0].pseudo)
         if (err) {
           res.statusCode == 503;
           next();
@@ -254,95 +279,78 @@ app.use(function (req, res, next) {
 
 
 const gE = require('game-engine');
-
-// IO
 let playersList = {};
 
-// test mongo
-MongoClient.connect("mongodb+srv://Bertmern:DatMongoatlaspass2019@cluster0-egm2w.mongodb.net/IFOCOP-BACKEND?retryWrites=true",{useNewUrlParser: true} ,function(err, db){
+// IO
 
-  if(err){
-    throw err;
+io.on('connection', function (socket) {
+
+  // association du user et du socket.id
+  const client = new MongoClient(url, {
+    useNewUrlParser: true
+  });
+  client.connect(err => {
+    if (err) {
+      throw err
+    } else {
+      let token = socket.handshake.query.token;
+      token = token.replace(/\s+/g, '');
+      // console.log(token)
+      const collection = client.db(dbname).collection("sessions");
+      collection.find({
+        "token": token
+      }).toArray(function (err, result) {
+        if (err) throw err;
+        if (result === undefined) {
+          console.log('collection non trouvé')
+        } else { 
+          collection.updateOne({
+            "token": token
+          }, {
+            $set: { token: "", socketID: socket.id}
+          })
+        }
+      })
+    }
+  });
+
+  playersList[socket.id] = {
+    pseudo: '',
+    x: 100,
+    y: 100,
+    w: 50,
+    h: 50
   }
 
-  console.log('MongoDB connected...');
+  // console.log(playersList);
 
-  io.on('connection', function (socket) {
+  socket.on('player-datas', function (msg) {
 
-    // association du TOKEN
-    console.log('le socket ID : ', socket.id)
-    console.log('le token : ', socket.handshake.query.token);
+    // identification du player ayant émis les datas
 
-    const client = new MongoClient(url, {
-      useNewUrlParser: true
-    });
-    client.connect(err => {
-      if (err) {
-        res.statusCode == 503;
-        next();
-      } else {
-        const collection = client.db(dbname).collection("sessions");
-        collection.find({
-              token: socket.handshake.query.token
-            }).toArray(function (err, result) {
-              if (err) throw err;
-              if (result === undefined) {
-                console.log('collection non trouvé')
-              } else {
-                // collection.update({}, {})
-                console.log(result)
-              }
-            })
-      }
+
+    // appelle une fonction du module game engine pour update les pos x et y du joueur
+    var upDatePositionJoueur = gE.game.deplacement(msg.playerDirection, playersList[socket.id].x, playersList[socket.id].y);
+    playersList[socket.id].x = upDatePositionJoueur.newPosX;
+    playersList[socket.id].y = upDatePositionJoueur.newPosY;
+    // console.log(upDatePositionJoueur);
+
+    io.emit('positions-datas', {
+      player: playersList[socket.id],
+      newPosX: playersList[socket.id].x,
+      newPosY: playersList[socket.id].y
     });
 
-    // collection.find({
-    //     token: socket.handshake.query.token
-    //   }, function (err, result) {
-    //     console.log(result);
-    //     if (err) throw err;
-    //     if (data === undefined) {
-    //       console.log('collection non trouvé')
-    //     } else {
-    //       console.log(result);
-    //       // collection.update({}, {})
-    //     }
-    //   })
-
-    playersList[socket.id] = {
-      pseudo: '',
-      x: 100,
-      y: 100,
-      w: 50,
-      h: 50
-    }
-
-    // console.log(playersList);
-
-    socket.on('player-datas', function (msg) {
-      // appelle une fonction du module game engine pour update les pos x et y du joueur
-      var upDatePositionJoueur = gE.game.deplacement(msg.playerDirection, playersList[socket.id].x, playersList[socket.id].y);
-      playersList[socket.id].x = upDatePositionJoueur.newPosX;
-      playersList[socket.id].y = upDatePositionJoueur.newPosY;
-      // console.log(upDatePositionJoueur);
-
-      io.emit('positions-datas', {
-        player: playersList[socket.id],
-        newPosX: playersList[socket.id].x,
-        newPosY: playersList[socket.id].y
-      });
 
 
+  });
 
-    });
+  socket.on('disconnect', function () {
+    // delete playersList[socket.id];
+  });
 
-    socket.on('disconnect', function () {
-      // delete playersList[socket.id];
-    });
+})
 
-  })
-// fin mongo
-});
 
 // LISTEN
 
