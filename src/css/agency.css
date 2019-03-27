@@ -162,13 +162,21 @@ img::-moz-selection {
 }
 
 #canvas {
-  /* margin-top: 140px; */
-  
-	height: 480px;
-  width: 900px;
+  width: 95%;
   border: 1px solid rgb(128, 128, 128);
   border-radius: 3px;
 }
+
+@media (min-width: 768px) {
+  #canvas {
+    width: 95%;
+  }
+
+@media (min-width: 992px) {
+  #canvas {
+    width: 900px;
+  }
+}  
 
 @media (min-width: 992px) {
   #mainNav {
