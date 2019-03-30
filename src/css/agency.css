@@ -3,7 +3,7 @@
  * Copyright 2013-2019 Start Bootstrap
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-agency/blob/master/LICENSE)
  */
-
+html,
 body {
   overflow-x: hidden;
   font-family: 'Oswald', monospace, 'Roboto Slab', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -18,7 +18,6 @@ body {
 }
 
 .col-md-6.text-center.justify-content-center {
-
 	margin:auto;
 }
 

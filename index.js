@@ -281,6 +281,8 @@ app.use(function (req, res, next) {
 const gE = require('game-engine');
 
 let playersList = {};
+let gameReady = false;
+let playersReady = false;
 
 // IO
 
@@ -298,62 +300,45 @@ io.on('connection', function (socket) {
       token = token.replace(/\s+/g, '');
       // console.log(token)
       const collection = client.db(dbname).collection("sessions");
-      collection.find({
-        "token": token
-      }).toArray(function (err, result) {
-        if (err) throw err;
-        if (result === undefined) {
-          console.log('collection non trouvé')
-        } else { 
-          collection.updateOne({
-            "token": token
-          }, {
-            $set: { token: "", socketID: socket.id}
-          })
-        }
-      })
-    }
-  });
-  client.connect(err => {
-    if (err) {
-      throw err
-    } else {
-      const collection = client.db(dbname).collection("sessions");
-      collection.find({
-        "socketID": socket.id
-      }).toArray(function (err, result) {
-        console.log(result)
-      })
-    }
-  })
-
+        collection.updateOne({
+          "token": token
+        }, {
+          $set: { token: "", socketID: socket.id}
+        })
+        // collection.findOne({socketID: socket.id}, function (err, result) {
+        //   if (err) {
+        //     throw err
+        //   } else {
+        //       console.log(result.pseudo)
+        //       playersList[socket.id] = {
+        //         pseudo: result.pseudo,
+        //         x: 100,
+        //         y: 100,
+        //         w: 50,
+        //         h: 50
+        //       }
+        //       console.log(playersList);
+        //   }
+        // })
+      }
+    });
+    
   console.log(socket.id)
-
-  playersList[socket.id] = {
-    pseudo: '',
-    x: 100,
-    y: 100,
-    w: 50,
-    h: 50
-  }
-
-  // console.log(playersList);
-
   socket.on('player-datas', function (msg) {
 
     // identification du player ayant émis les datas
 
 
     // appelle une fonction du module game engine pour update les pos x et y du joueur
-    var upDatePositionJoueur = gE.game.deplacement(msg.playerDirection, playersList[socket.id].x, playersList[socket.id].y);
-    playersList[socket.id].x = upDatePositionJoueur.newPosX;
-    playersList[socket.id].y = upDatePositionJoueur.newPosY;
+    // var upDatePositionJoueur = gE.game.deplacement(msg.playerDirection, playersList[socket.id].x, playersList[socket.id].y);
+    // playersList[socket.id].x = upDatePositionJoueur.newPosX;
+    // playersList[socket.id].y = upDatePositionJoueur.newPosY;
     // console.log(upDatePositionJoueur);
 
     io.emit('positions-datas', {
-      player: playersList[socket.id],
-      newPosX: playersList[socket.id].x,
-      newPosY: playersList[socket.id].y
+      // player: playersList[socket.id],
+      // newPosX: playersList[socket.id].x,
+      // newPosY: playersList[socket.id].y
     });
 
 
@@ -361,7 +346,7 @@ io.on('connection', function (socket) {
   });
 
   socket.on('disconnect', function () {
-    // delete playersList[socket.id];
+    delete playersList[socket.id];
   });
 
 })
