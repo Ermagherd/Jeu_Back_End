@@ -279,6 +279,7 @@ app.use(function (req, res, next) {
 
 
 const gE = require('game-engine');
+
 let playersList = {};
 
 // IO
@@ -313,6 +314,20 @@ io.on('connection', function (socket) {
       })
     }
   });
+  client.connect(err => {
+    if (err) {
+      throw err
+    } else {
+      const collection = client.db(dbname).collection("sessions");
+      collection.find({
+        "socketID": socket.id
+      }).toArray(function (err, result) {
+        console.log(result)
+      })
+    }
+  })
+
+  console.log(socket.id)
 
   playersList[socket.id] = {
     pseudo: '',
