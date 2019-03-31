@@ -21,6 +21,34 @@ body {
 	margin:auto;
 }
 
+#user {
+  margin-bottom: 10px;
+}
+
+#infos {
+  color: white;
+  margin-top: 10px;
+}
+
+#high-scores {
+  margin-top: 30px;
+  color: white;
+}
+
+.scores {
+  color: #fed136;
+  font-size: 20px;
+}
+
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #fed136;
+  margin: 1em 0;
+  padding: 0; 
+}
+
 #page-content {
   flex: 1 0 auto;
 }
@@ -29,8 +57,28 @@ body {
   flex-shrink: none;
 }
 
-#reset {
+#ready {
+  display: inline-block;
   margin: 20px auto;
+  margin-right: 10px;
+  width: 100px;
+  height: 40px;
+  border: 1px solid white;
+}
+
+#ready:hover {
+  cursor: pointer;
+}
+
+#ready btn {
+  color: white;
+  font-size: 20px;
+}
+
+#reset {
+  display: inline-block;
+  margin: 20px auto;
+  margin-left: 10px;
   width: 100px;
   height: 40px;
   border: 1px solid white;

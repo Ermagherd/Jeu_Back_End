@@ -281,18 +281,10 @@ app.use(function (req, res, next) {
 const gE = require('game-engine');
 
 let playersList = {};
+let playersReady = false;
 
 // chrono
 let seconds = 0;
-let chrono = function () {
-  var timer = setInterval(() => {
-    seconds += 1;
-    console.log(seconds);
-  }, 1000);
-}
-let stopChrono = function () {
-  clearInterval(timer);
-}
 
 // fonction d'envoi des infos de début de partie
 function infosBase (){
@@ -301,6 +293,7 @@ function infosBase (){
       player1Pseudo: playersList[1].pseudo,
       player1Avatar: playersList[1].pseudo.slice(0,1),
       player1X: playersList[1].x,
+            
       player1Y: playersList[1].y,
       player1W: playersList[1].w,
       player1H: playersList[1].h,
@@ -319,6 +312,17 @@ function infosBase (){
 
 io.on('connection', function (socket) {
 
+  var timer
+  let chrono = function () {
+    timer = setInterval(() => {
+      seconds += 1;
+      io.emit('chrono', {chrono: seconds})
+      console.log(seconds);
+    }, 1000);
+  }
+  let stopChrono = function () {
+    clearInterval(timer);
+  }
   // association du user et du socket.id
   const client = new MongoClient(url, {
     useNewUrlParser: true
@@ -376,6 +380,7 @@ io.on('connection', function (socket) {
   });
 
   socket.on('disconnect', function () {
+    playersReady = false;
     for (var element in playersList) {
       if (playersList[element].socketID === socket.id) {
         delete playersList[element];
@@ -385,7 +390,7 @@ io.on('connection', function (socket) {
 
   socket.on('player-datas', function (msg) {
 
-    if (2 === Object.keys(playersList).length) {
+    if (playersReady) {
 
       if (socket.id === playersList[1].socketID){
         let upDatePositionJoueur = gE.game.deplacement(msg.playerDirection, playersList[1].x, playersList[1].y);
@@ -409,7 +414,7 @@ io.on('connection', function (socket) {
 
   socket.on('collision', function (msg) {
   
-    if (2 === Object.keys(playersList).length) {
+    if (playersReady) {
   
       playersList[1].x = 290;
       playersList[1].y = 17;
@@ -426,7 +431,34 @@ io.on('connection', function (socket) {
   });
 
   socket.on('reset', function (msg) {
-    
+
+    playersList[1].x = 290;
+    playersList[1].y = 17;
+    playersList[2].x = 680;
+    playersList[2].y = 336;
+    seconds = 0;
+    io.emit('chrono', {chrono: seconds})
+
+    io.emit('positions-datas', {
+      player1X: playersList[1].x,
+      player1Y: playersList[1].y,
+      player2X: playersList[2].x,
+      player2Y: playersList[2].y,
+    });
+  })
+
+  socket.on('ready', function (msg) {
+    if (2 == Object.keys(playersList).length){
+      playersReady = true;
+      seconds = 0;
+      chrono();
+    }
+  })
+
+  socket.on('win', function (msg){
+    clearInterval(timer);
+    let score = seconds;
+
     playersList[1].x = 290;
     playersList[1].y = 17;
     playersList[2].x = 680;
@@ -438,6 +470,33 @@ io.on('connection', function (socket) {
       player2X: playersList[2].x,
       player2Y: playersList[2].y,
     });
+    // console.log('seconds ' + score)
+    if (score > 2) {
+      client.connect(err => {
+        if (err) {
+          throw err
+        } else {
+          const collection = client.db(dbname).collection("scores");
+          collection.insertOne({
+            "player1": playersList[1].pseudo,
+            "player2": playersList[2].pseudo,
+            "score": score
+          })
+        }
+      });
+    }
+    seconds = 0;
+    io.emit('chrono', {chrono: seconds})
+  })
+
+  socket.on('get-scores', function(msg){
+
+        const collection = client.db(dbname).collection("scores");
+        collection.find({}).sort({score: 1}).limit(10).toArray(function(err, data){
+          if (err) throw err;
+          socket.emit("your-scores", data);
+        })
+
   })
 
 })

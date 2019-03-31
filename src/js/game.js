@@ -188,7 +188,6 @@ function game(socket) {
 				if (this.x > 0){
           this.x -= 4;
           this.w += 4;
-          console.log(this.x);
 				}
 			}
       // if (this.orientation === 'down') {
@@ -232,10 +231,10 @@ function game(socket) {
 	}
 	
 	var arriveePlayer2 = {
-		x: 280, // position à récupérer depuis le serveur
-		y: 105, // position à récupérer depuis le serveur
-		w: 60, // position à récupérer depuis le serveur
-		h: 60, // position à récupérer depuis le serveur
+		x: 280,
+		y: 105,
+		w: 60,
+		h: 60,
 		drawArriveePlayer2: function () {
 			ctx.strokeStyle = couleur2;
 			ctx.lineWidth = 5;
@@ -273,8 +272,6 @@ function game(socket) {
 							break;
             case couleur2:
               socket.emit('collision', {collision: 'player1'})
-							// player1.x = 100;
-							// player1.y = 100;
 							console.log("dead");
 							break;
 					}
@@ -310,8 +307,6 @@ function game(socket) {
 							break;
             case couleur1:
               socket.emit('collision', {collision: 'player2'})
-							// player2.x = 100;
-							// player2.y = 330;
 							console.log("dead");
 							break;
 					}
@@ -385,7 +380,8 @@ function game(socket) {
 			ctx.font = "40px Oswald";
 			ctx.fillStyle = couleur1;
 			ctx.fillText('WIN !', 410, 262);
-			ctx.restore();
+      ctx.restore();
+      socket.emit('win', {});
 			}
 		})();
 		///////////////////////////////////////////////////////////////
@@ -423,8 +419,6 @@ function game(socket) {
 		player2.drawAvatar();
 
 		// IO
-
-
 
 		// console.log(player1.x, player1.y)
 		// récursion
