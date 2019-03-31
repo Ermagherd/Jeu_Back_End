@@ -8,7 +8,7 @@ function game(socket) {
 	canvas.width = 900;
 	canvas.height = 480;
 	var ctx = canvas.getContext("2d");
-	ctx.font = "14px Robot Condensed";
+	// ctx.font = "60px Oswald";
 	ctx.imageSmoothingEnabled = false;
 	ctx.msImageSmoothingEnabled = false;
 	ctx.mozImageSmoothingEnabled = false;
@@ -92,124 +92,43 @@ function game(socket) {
 		}
 	};
 
-	var controlsPlayer2 = {
-
-		gauche: false,
-		droite: false,
-		haut: false,
-		bas: false,
-		restart: false,
-		/////////////////////////////////////////
-		keyUpOrDown: function (event) {
-
-			// CHECK SI KEYDOWN OU KEYUP
-			var defKey = (event.type == 'keydown') ? true : false;
-
-			switch (event.keyCode) {
-
-				case 74: // J
-					controlsPlayer2.gauche = defKey;
-					break;
-				case 73: // I
-					controlsPlayer2.haut = defKey;
-					break;
-				case 76: // L
-					controlsPlayer2.droite = defKey;
-					break;
-				case 75: // K
-					controlsPlayer2.bas = defKey;
-					break;
-				case 82: // R
-					controlsPlayer2.restart = defKey;
-					break;
-			}
-		},
-		direction: '',
-		checkDirection: function () {
-			// NE PAS MODIFIER L'ORDRE DE VERIFICATION
-			if (this.droite && this.haut) {
-				return this.direction = 'hautDroite';
-			}
-			if (this.gauche && this.haut) {
-				return this.direction = 'hautGauche';
-			}
-			if (this.droite && this.bas) {
-				return this.direction = 'basDroite';
-			}
-			if (this.gauche && this.bas) {
-				return this.direction = 'basGauche';
-			}
-			if (this.droite) {
-				return this.direction = 'droite';
-			}
-			if (this.gauche) {
-				return this.direction = 'gauche';
-			}
-			if (this.haut) {
-				return this.direction = 'haut';
-			}
-			if (this.bas) {
-				return this.direction = 'bas';
-			}
-			if (!this.gauche && !this.haut && !this.droite && !this.bas) {
-				return this.direction = 'idle';
-			}
-		}
-	};
-
 	///////////////////////////////////////////////////////////////
 	/////                         JOUEURS                     /////
 	///////////////////////////////////////////////////////////////
 
 	var player1 = {
-		x: 100,
-		y: 100,
-		w: 50,
-		h: 50,
+    pseudo:'',
+    avatar:'',
+		x: null,
+		y: null,
+		w: null,
+		h: null,
 		drawPlayer: function () {
 			ctx.fillStyle = couleur1;
 			ctx.fillRect(this.x, this.y, this.w, this.h);
+		},
+		drawAvatar: function () {
+      ctx.fillStyle = "#FFFFFF";
+      ctx.font = "40px Oswald";
+      ctx.fillText(this.avatar, this.x + 14, this.y + 40);
 		}
 	}
 
 	var player2 = {
-		x: 100,
-		y: 330,
-		w: 50,
-		h: 50,
+    pseudo:'',
+    avatar:'',
+		x: null,
+		y: null,
+		w: null,
+		h: null,
 		drawPlayer: function () {
 			ctx.fillStyle = couleur2
 			ctx.fillRect(this.x, this.y, this.w, this.h);
 		},
-		deplacement: function (){
-			if (controlsPlayer2.direction === 'gauche'){
-				player2.x -=5;
-			}
-			if (controlsPlayer2.direction === 'droite'){
-				player2.x +=5;
-			}
-			if (controlsPlayer2.direction === 'haut'){
-				player2.y -=5;
-			}
-			if (controlsPlayer2.direction === 'bas'){
-				player2.y +=5;
-			}
-			if (controlsPlayer2.direction === 'hautGauche'){
-				player2.x -=5;
-				player2.y -=5;
-			}
-			if (controlsPlayer2.direction === 'hautDroite'){
-				player2.x +=5;
-				player2.y -=5;
-			}
-			if (controlsPlayer2.direction === 'basGauche'){
-				player2.x -=5;
-				player2.y +=5;
-			}
-			if (controlsPlayer2.direction === 'basDroite'){
-				player2.x +=5;
-				player2.y +=5;
-			}
+		drawAvatar: function () {
+      ctx.fillStyle = "#FFFFFF";
+      ctx.font = "40px Oswald";
+      ctx.fillText(this.avatar, this.x + 14, this.y + 40);
 		}
 	}
 
@@ -223,7 +142,7 @@ function game(socket) {
 			this.x = x || 0;
 			this.y = y || 0;
 			this.w = w || 50;
-			this.h = h || 50;
+			this.h = h || 10;
 		}
 		ConstructeurLaser.prototype.drawLaser = function () {
 			ctx.fillStyle = 'rgb(128, 128, 128)'; // gris
@@ -234,9 +153,10 @@ function game(socket) {
 		};
 	})();
 
-	var canon1 = nouveauCanonLaser(350, -25);
-	var canon3 = nouveauCanonLaser(600, 455);
-	var canon2 = nouveauCanonLaser(450, 455);
+	var canon1 = nouveauCanonLaser(350, 0);
+	var canon2 = nouveauCanonLaser(350, 0);
+	var canon3 = nouveauCanonLaser(600, 470);
+	var canon4 = nouveauCanonLaser(450, 470);
 
 	//  RAYON LASER
 	var nouveauRayonLaser = (function (){
@@ -323,7 +243,7 @@ function game(socket) {
 					switch (ensembleRayons[i].beamColor){
 						case couleur1:
 							if (ensembleRayons[i].orientation === 'down'){
-								ensembleRayons[i].h = player1.y - 25;
+								ensembleRayons[i].h = player1.y - 10;
 							} else {
 								ensembleRayons[i].y = player1.y + player1.h;
 							}
@@ -358,7 +278,7 @@ function game(socket) {
 					switch (ensembleRayons[i].beamColor){
 						case couleur2:
 							if (ensembleRayons[i].orientation === 'down'){
-								ensembleRayons[i].h = player2.y - 25;
+								ensembleRayons[i].h = player2.y - 10;
 							} else {
 								ensembleRayons[i].y = player2.y + player2.h;
 							}
@@ -375,10 +295,28 @@ function game(socket) {
 		})();
 	}
 
-	// IO
+  // IO
+  socket.on('starterInfos', function (msg) {
+    player1.pseudo = msg.player1Pseudo;
+    player1.avatar = msg.player1Avatar;
+    player1.x = msg.player1X;
+    player1.y = msg.player1Y;
+    player1.w = msg.player1W;
+    player1.h = msg.player1H;
+    player2.pseudo = msg.player2Pseudo;
+    player2.avatar = msg.player2Avatar;
+    player2.x = msg.player2X;
+    player2.y = msg.player2Y;
+    player2.w = msg.player2W;
+    player2.h = msg.player2H;
+    console.log(msg)
+	})
+
 	socket.on('positions-datas', function (msg) {
-		player1.x = msg.newPosX;
-		player1.y = msg.newPosY;
+		player1.x = msg.player1X;
+		player1.y = msg.player1Y;
+		player2.x = msg.player2X;
+		player2.y = msg.player2Y;
 	})
 
 	///////////////////////////////////////////////////////////////
@@ -395,7 +333,6 @@ function game(socket) {
 		/////                       BACKGROUND                    /////
 		///////////////////////////////////////////////////////////////
 
-		// ctx.fillStyle = 'rgb(255, 255, 255)'; // fond blanc
 		ctx.fillStyle = 'rgba(33, 37, 41, 1)'; // fond idem site
 		ctx.fillRect(0, 0, canvas.width, canvas.height); // fond blanc
 
@@ -404,17 +341,8 @@ function game(socket) {
 		///////////////////////////////////////////////////////////////
 
 		controlsPlayer1.checkDirection();
-		controlsPlayer2.checkDirection();
 
 		// PLAYER 1
-		player2.deplacement();
-
-		///////////////////////////////////////////////////////////////
-		/////                  REQUETES SERVEURS ?                /////
-		///////////////////////////////////////////////////////////////
-
-		// ???
-		// collecte d'un objet global d'infos et envoi au serveur ?
 		
 		///////////////////////////////////////////////////////////////
 		/////                      COLLISIONS                     /////
@@ -450,18 +378,20 @@ function game(socket) {
 		canon3.drawLaser();
 		
 		// ARRIVEES
-		arriveePlayer1.drawArriveePlayer1();
-		arriveePlayer2.drawArriveePlayer2();
+		// arriveePlayer1.drawArriveePlayer1();
+		// arriveePlayer2.drawArriveePlayer2();
 
 		// PLAYERS
 		player1.drawPlayer();
 		player2.drawPlayer();
+		player1.drawAvatar();
+		player2.drawAvatar();
 
 		// IO
 
 
 
-		
+		// console.log(player1.x, player1.y)
 		// récursion
 
 		window.requestAnimationFrame(animationJeu);
@@ -486,8 +416,6 @@ function game(socket) {
 	// INITIALISATION DES EVENT LISTENERS
 	window.addEventListener('keydown', controlsPlayer1.keyUpOrDown, true);
 	window.addEventListener('keyup', controlsPlayer1.keyUpOrDown, true);
-	window.addEventListener('keydown', controlsPlayer2.keyUpOrDown, true);
-	window.addEventListener('keyup', controlsPlayer2.keyUpOrDown, true);
 
 	// SNIPPET COMPATIBILITE REQUESTANIMATIONFRAME
 	if (!window.requestAnimationFrame) {

@@ -284,6 +284,27 @@ let playersList = {};
 let gameReady = false;
 let playersReady = false;
 
+// fonction d'envoi des infos de début de partie
+function infosBase (){
+  if (2 === Object.keys(playersList).length) {
+    let infos = {
+      player1Pseudo: playersList[1].pseudo,
+      player1Avatar: playersList[1].pseudo.slice(0,1),
+      player1X: playersList[1].x,
+      player1Y: playersList[1].y,
+      player1W: playersList[1].w,
+      player1H: playersList[1].h,
+      player2Pseudo: playersList[2].pseudo,
+      player2Avatar: playersList[2].pseudo.slice(0,1),
+      player2X: playersList[2].x,
+      player2Y: playersList[2].y,
+      player2W: playersList[2].w,
+      player2H: playersList[2].h
+    }
+    io.emit('starterInfos', infos);
+  }
+};
+
 // IO
 
 io.on('connection', function (socket) {
@@ -300,57 +321,85 @@ io.on('connection', function (socket) {
       token = token.replace(/\s+/g, '');
       // console.log(token)
       const collection = client.db(dbname).collection("sessions");
-        collection.updateOne({
-          "token": token
-        }, {
-          $set: { token: "", socketID: socket.id}
-        })
-        // collection.findOne({socketID: socket.id}, function (err, result) {
-        //   if (err) {
-        //     throw err
-        //   } else {
-        //       console.log(result.pseudo)
-        //       playersList[socket.id] = {
-        //         pseudo: result.pseudo,
-        //         x: 100,
-        //         y: 100,
-        //         w: 50,
-        //         h: 50
-        //       }
-        //       console.log(playersList);
-        //   }
-        // })
-      }
-    });
-    
-  console.log(socket.id)
-  socket.on('player-datas', function (msg) {
-
-    // identification du player ayant émis les datas
-
-
-    // appelle une fonction du module game engine pour update les pos x et y du joueur
-    // var upDatePositionJoueur = gE.game.deplacement(msg.playerDirection, playersList[socket.id].x, playersList[socket.id].y);
-    // playersList[socket.id].x = upDatePositionJoueur.newPosX;
-    // playersList[socket.id].y = upDatePositionJoueur.newPosY;
-    // console.log(upDatePositionJoueur);
-
-    io.emit('positions-datas', {
-      // player: playersList[socket.id],
-      // newPosX: playersList[socket.id].x,
-      // newPosY: playersList[socket.id].y
-    });
-
-
-
+      collection.updateOne({
+        "token": token
+      }, {
+        $set: {
+          socketID: socket.id
+        }
+      })
+      collection.findOne({
+        socketID: socket.id
+      }, function (err, result) {
+        if (err) {
+          throw err
+        } else {
+          if (!result) {
+            throw err
+          } else {
+            console.log(result.pseudo)
+            if (!playersList[1]){
+              playersList[1] = {
+                socketID: socket.id,
+                pseudo: result.pseudo,
+                x: 100,
+                y: 100,
+                w: 50,
+                h: 50
+              }
+            } else {
+              playersList[2] = {
+                socketID: socket.id,
+                pseudo: result.pseudo,
+                x: 100,
+                y: 330,
+                w: 50,
+                h: 50
+              }
+            }
+            infosBase();
+            console.log('on co : ', playersList);
+          }
+        }
+      })
+    }
   });
 
   socket.on('disconnect', function () {
-    delete playersList[socket.id];
+    for (var element in playersList) {
+      if (playersList[element].socketID === socket.id) {
+        delete playersList[element];
+      };
+    }
+  });
+
+  socket.on('player-datas', function (msg) {
+
+    if (2 === Object.keys(playersList).length) {
+
+      if (socket.id === playersList[1].socketID){
+        let upDatePositionJoueur = gE.game.deplacement(msg.playerDirection, playersList[1].x, playersList[1].y);
+        playersList[1].x = upDatePositionJoueur.newPosX;
+        playersList[1].y = upDatePositionJoueur.newPosY;
+      } 
+      if (socket.id === playersList[2].socketID){
+        let upDatePositionJoueur = gE.game.deplacement(msg.playerDirection, playersList[2].x, playersList[2].y);
+        playersList[2].x = upDatePositionJoueur.newPosX;
+        playersList[2].y = upDatePositionJoueur.newPosY;
+      } 
+
+
+      io.emit('positions-datas', {
+        player1X: playersList[1].x,
+        player1Y: playersList[1].y,
+        player2X: playersList[2].x,
+        player2Y: playersList[2].y,
+      });
+    }
+
   });
 
 })
-
 
 // LISTEN
 
