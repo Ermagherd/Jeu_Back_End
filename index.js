@@ -278,7 +278,96 @@ app.use(function (req, res, next) {
 });
 
 
-const gE = require('game-engine');
+var deplacement = function (direction, x, y){
+  var posX = x;
+  var posY = y;
+  if (direction === 'gauche'){
+    if (posX <= 0) {
+      posX = 0
+    } else {
+      posX -=5;
+    }
+  }
+  if (direction === 'droite'){
+    if (posX >= 860) {
+      posX = 860
+    } else {
+      posX +=5;
+    }
+  }
+  if (direction === 'haut'){
+    if (posY <= 0) {
+      posY = 0
+    } else {
+      posY -=5;
+    }
+  }
+  if (direction === 'bas'){
+    if (posY >= 440) {
+      posY = 440
+    } else {
+      posY +=5;
+    }
+  }
+  if (direction === 'hautGauche'){
+    if (posX <= 0) {
+      posX = 0
+    } else {
+      posX -=5;
+    }
+    if (posY <= 0) {
+      posY = 0
+    } else {
+      posY -=5;
+    }
+  }
+  if (direction === 'hautDroite'){
+    if (posX >= 860) {
+      posX = 860
+    } else {
+      posX +=5;
+    }
+    if (posY <= 0) {
+      posY = 0
+    } else {
+      posY -=5;
+    }
+  }
+  if (direction === 'basGauche'){
+    if (posX <= 0) {
+      posX = 0
+    } else {
+      posX -=5;
+    }
+    if (posY >= 440) {
+      posY = 440
+    } else {
+      posY +=5;
+    }
+  }
+  if (direction === 'basDroite'){
+    if (posX >= 860) {
+      posX = 860
+    } else {
+      posX +=5;
+    }
+    if (posY >= 440) {
+      posY = 440
+    } else {
+      posY +=5;
+    }
+  }
+  if (direction === 'idle'){
+    posX = posX;
+    posY = posY;
+  }
+  var change;
+  return change = {
+    newPosX: posX,
+    newPosY: posY,
+  }
+}
+
 
 let playersList = {};
 let playersReady = false;
@@ -393,12 +482,12 @@ io.on('connection', function (socket) {
     if (playersReady) {
 
       if (socket.id === playersList[1].socketID){
-        let upDatePositionJoueur = gE.game.deplacement(msg.playerDirection, playersList[1].x, playersList[1].y);
+        let upDatePositionJoueur = deplacement(msg.playerDirection, playersList[1].x, playersList[1].y);
         playersList[1].x = upDatePositionJoueur.newPosX;
         playersList[1].y = upDatePositionJoueur.newPosY;
       } 
       if (socket.id === playersList[2].socketID){
-        let upDatePositionJoueur = gE.game.deplacement(msg.playerDirection, playersList[2].x, playersList[2].y);
+        let upDatePositionJoueur = deplacement(msg.playerDirection, playersList[2].x, playersList[2].y);
         playersList[2].x = upDatePositionJoueur.newPosX;
         playersList[2].y = upDatePositionJoueur.newPosY;
       } 
@@ -448,7 +537,7 @@ io.on('connection', function (socket) {
   })
 
   socket.on('ready', function (msg) {
-    if (2 == Object.keys(playersList).length){
+    if (2 == Object.keys(playersList).length && playersReady === false){
       playersReady = true;
       seconds = 0;
       chrono();
