@@ -281,8 +281,18 @@ app.use(function (req, res, next) {
 const gE = require('game-engine');
 
 let playersList = {};
-let gameReady = false;
-let playersReady = false;
+
+// chrono
+let seconds = 0;
+let chrono = function () {
+  var timer = setInterval(() => {
+    seconds += 1;
+    console.log(seconds);
+  }, 1000);
+}
+let stopChrono = function () {
+  clearInterval(timer);
+}
 
 // fonction d'envoi des infos de début de partie
 function infosBase (){
@@ -342,19 +352,19 @@ io.on('connection', function (socket) {
               playersList[1] = {
                 socketID: socket.id,
                 pseudo: result.pseudo,
-                x: 100,
-                y: 100,
-                w: 50,
-                h: 50
+                x: 290,
+                y: 17,
+                w: 40,
+                h: 40
               }
             } else {
               playersList[2] = {
                 socketID: socket.id,
                 pseudo: result.pseudo,
-                x: 100,
-                y: 330,
-                w: 50,
-                h: 50
+                x: 680,
+                y: 336,
+                w: 40,
+                h: 40
               }
             }
             infosBase();
@@ -388,7 +398,6 @@ io.on('connection', function (socket) {
         playersList[2].y = upDatePositionJoueur.newPosY;
       } 
 
-
       io.emit('positions-datas', {
         player1X: playersList[1].x,
         player1Y: playersList[1].y,
@@ -396,8 +405,40 @@ io.on('connection', function (socket) {
         player2Y: playersList[2].y,
       });
     }
-
   });
+
+  socket.on('collision', function (msg) {
+  
+    if (2 === Object.keys(playersList).length) {
+  
+      playersList[1].x = 290;
+      playersList[1].y = 17;
+      playersList[2].x = 680;
+      playersList[2].y = 336;
+  
+      io.emit('positions-datas', {
+        player1X: playersList[1].x,
+        player1Y: playersList[1].y,
+        player2X: playersList[2].x,
+        player2Y: playersList[2].y,
+      });
+    }
+  });
+
+  socket.on('reset', function (msg) {
+    
+    playersList[1].x = 290;
+    playersList[1].y = 17;
+    playersList[2].x = 680;
+    playersList[2].y = 336;
+
+    io.emit('positions-datas', {
+      player1X: playersList[1].x,
+      player1Y: playersList[1].y,
+      player2X: playersList[2].x,
+      player2Y: playersList[2].y,
+    });
+  })
 
 })
 

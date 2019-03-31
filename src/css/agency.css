@@ -29,6 +29,22 @@ body {
   flex-shrink: none;
 }
 
+#reset {
+  margin: 20px auto;
+  width: 100px;
+  height: 40px;
+  border: 1px solid white;
+}
+
+#reset:hover {
+  cursor: pointer;
+}
+
+#reset btn {
+  color: white;
+  font-size: 20px;
+}
+
 p {
   line-height: 1.75;
 }
@@ -727,4 +743,5 @@ ul.social-buttons li a {
 
 ul.social-buttons li a:active, ul.social-buttons li a:focus, ul.social-buttons li a:hover {
   background-color: #fed136;
+}
 }

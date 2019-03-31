@@ -4,6 +4,10 @@ window.addEventListener('DOMContentLoaded', function () {
 
   var socket = io({query: tokenWs});
 
+  $('#reset').on('click', function () {
+    socket.emit('reset', {})
+  })
+
 	///////////////////////////////////////////////////////////////
 	/////                     LANCEMENT DU JEU                /////
 	///////////////////////////////////////////////////////////////

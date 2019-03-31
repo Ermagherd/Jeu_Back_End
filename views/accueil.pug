@@ -9,14 +9,15 @@ body
 		header.masthead
 			h1(style="margin-bottom: 25px") Hello #{pseudo}
 			p
-				span joueur 1 : #{joueur1} 
-				span  / 
-				span joueur 2 : #{joueur2}
+				span Temps : #{joueur1} 
 			h3 Le jeu débutera lorsque les 2 joueurs seront prêts
 		.container.text-center
 			canvas#canvas()
+		.container.text-center
+			div#reset
+				btn reset
 	p#token(style="display: none") #{tokenWs} 
-	include includes/footer.pug
+	//- include includes/footer.pug
 	// Bootstrap core JavaScript
 	script(src='vendor/jquery/jquery.min.js')
 	script(src='vendor/bootstrap/js/bootstrap.bundle.min.js')
