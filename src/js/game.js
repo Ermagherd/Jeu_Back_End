@@ -437,7 +437,7 @@ function game(socket) {
 		socket.emit('player-datas', playerDatas)
 	}
 	(function transfert() {
-		intervalId = setInterval(transfertDatas, 15);
+		intervalId = setInterval(transfertDatas, 5);
 	})();
 
 	// ON
