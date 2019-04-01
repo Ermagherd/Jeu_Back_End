@@ -1,8 +1,6 @@
 node_modules/
-src/vendor/
 src/img/about/
 src/img/logos/
 src/img/portfolio/
 src/img/team/
-src/scss/
 node_modules
