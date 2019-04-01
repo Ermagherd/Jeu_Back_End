@@ -285,76 +285,76 @@ var deplacement = function (direction, x, y){
     if (posX <= 0) {
       posX = 0
     } else {
-      posX -=5;
+      posX -=2;
     }
   }
   if (direction === 'droite'){
     if (posX >= 860) {
       posX = 860
     } else {
-      posX +=5;
+      posX +=2;
     }
   }
   if (direction === 'haut'){
     if (posY <= 0) {
       posY = 0
     } else {
-      posY -=5;
+      posY -=2;
     }
   }
   if (direction === 'bas'){
     if (posY >= 440) {
       posY = 440
     } else {
-      posY +=5;
+      posY +=2;
     }
   }
   if (direction === 'hautGauche'){
     if (posX <= 0) {
       posX = 0
     } else {
-      posX -=5;
+      posX -=2;
     }
     if (posY <= 0) {
       posY = 0
     } else {
-      posY -=5;
+      posY -=2;
     }
   }
   if (direction === 'hautDroite'){
     if (posX >= 860) {
       posX = 860
     } else {
-      posX +=5;
+      posX +=2;
     }
     if (posY <= 0) {
       posY = 0
     } else {
-      posY -=5;
+      posY -=2;
     }
   }
   if (direction === 'basGauche'){
     if (posX <= 0) {
       posX = 0
     } else {
-      posX -=5;
+      posX -=2;
     }
     if (posY >= 440) {
       posY = 440
     } else {
-      posY +=5;
+      posY +=2;
     }
   }
   if (direction === 'basDroite'){
     if (posX >= 860) {
       posX = 860
     } else {
-      posX +=5;
+      posX +=2;
     }
     if (posY >= 440) {
       posY = 440
     } else {
-      posY +=5;
+      posY +=2;
     }
   }
   if (direction === 'idle'){
