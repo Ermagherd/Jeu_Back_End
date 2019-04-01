@@ -21,6 +21,23 @@ body {
 	margin:auto;
 }
 
+#instructions {
+  margin-right: 100px;
+  display: inline-block;
+}
+
+#instructions:hover{
+  cursor: pointer;
+}
+
+#timer {
+  display: inline-block;
+}
+
+#tuto {
+  display: none;
+}
+
 #user {
   margin-bottom: 10px;
 }

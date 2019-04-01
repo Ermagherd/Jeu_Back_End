@@ -4,7 +4,15 @@ window.addEventListener('DOMContentLoaded', function () {
 
   var socket = io({query: tokenWs});
 
-  game(socket);
+  game(socket)
+
+  $('#instructions').mouseover(function () {
+    $('#tuto').css("display", "block");
+  })
+
+  $('#instructions').mouseout(function () {
+    $('#tuto').css("display", "none");
+  })
 
   $('#reset').on('click', function () {
     socket.emit('reset', {})

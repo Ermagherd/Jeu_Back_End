@@ -9,8 +9,10 @@ body
 		header.masthead
 			h1#user Hello #{pseudo}
 			p
-				h5#timer Temps : #{joueur1} 
+				h5#instructions Instructions
+				h5#timer Temps : #{joueur1}
 		.container.text-center
+			img#tuto(src="./img/tuto.png")
 			canvas#canvas()
 		.container.text-center
 			h5#infos Le jeu débute lorsqu'un des joueurs clique sur "ready"
