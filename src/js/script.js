@@ -13,6 +13,7 @@ window.addEventListener('DOMContentLoaded', function () {
   $('#instructions').mouseover(function () {
     $('#tuto').css("display", "inline-block");
     clearInterval(flashTuto);
+    $('#instructions').removeClass( "flashColor" );
   })
 
   $('#instructions').mouseout(function () {
