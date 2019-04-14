@@ -4,10 +4,15 @@ window.addEventListener('DOMContentLoaded', function () {
 
   var socket = io({query: tokenWs});
 
-  game(socket)
+  game(socket);
+
+  var flashTuto = setInterval(() => {
+      $('#instructions').toggleClass( "flashColor" );    
+  }, 250);
 
   $('#instructions').mouseover(function () {
-    $('#tuto').css("display", "block");
+    $('#tuto').css("display", "inline-block");
+    clearInterval(flashTuto);
   })
 
   $('#instructions').mouseout(function () {
@@ -42,6 +47,6 @@ window.addEventListener('DOMContentLoaded', function () {
 	///////////////////////////////////////////////////////////////
 	/////                     LANCEMENT DU JEU                /////
 	///////////////////////////////////////////////////////////////
-	game(socket);
+	// game(socket);
 
 }, true);

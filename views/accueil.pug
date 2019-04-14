@@ -15,7 +15,7 @@ body
 			img#tuto(src="./img/tuto.png")
 			canvas#canvas()
 		.container.text-center
-			h5#infos Le jeu débute lorsqu'un des joueurs clique sur "ready"
+			h5#infos Le jeu débute lorsque les 2 joueurs sont connectés et que l'un d'eux clique sur "ready"
 			div#ready
 				btn ready
 			div#reset
@@ -26,7 +26,6 @@ body
 			h5(style="color: white") MAJ toutes les 5 secondes
 			div#liste(style="margin-top: 25px")
 	p#token(style="display: none") #{tokenWs} 
-	//- include includes/footer.pug
 	// Bootstrap core JavaScript
 	script(src='vendor/jquery/jquery.min.js')
 	script(src='vendor/bootstrap/js/bootstrap.bundle.min.js')
